@@ -52,6 +52,7 @@ crtsi0.sm8
 #<BEGIN OBJECT_FILES>
 Release\i2c_master_poll.o
 Release\main.o
+Release\rtc.o
 #<END OBJECT_FILES>
 
 

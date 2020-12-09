@@ -52,6 +52,7 @@ crtsi0.sm8
 #<BEGIN OBJECT_FILES>
 Debug\i2c_master_poll.o
 Debug\main.o
+Debug\rtc.o
 #<END OBJECT_FILES>
 
 

@@ -77,7 +77,7 @@
  208  006d be00          	ldw	x,_TIM4_tout
  209  006f 2704          	jreq	L301
  210                     ; 69     I2C->DR = (u8)(SLAVE_ADDRESS << 1);   						// Send 7-bit device address & Write (R/W = 0)
- 212  0071 35a25216      	mov	21014,#162
+ 212  0071 35de5216      	mov	21014,#222
  213  0075               L301:
  214                     ; 71   while(!(I2C->SR1 & I2C_SR1_ADDR) &&  tout()); 				// test EV6 - wait for address ack (ADDR)
  216  0075 c65217        	ld	a,21015
@@ -125,7 +125,7 @@
  274  00b3 be00          	ldw	x,_TIM4_tout
  275  00b5 2704          	jreq	L741
  276                     ; 89     I2C->DR = (u8)(SLAVE_ADDRESS << 1) | 1;         	// Send 7-bit device address & Write (R/W = 1)
- 278  00b7 35a35216      	mov	21014,#163
+ 278  00b7 35df5216      	mov	21014,#223
  279  00bb               L741:
  280                     ; 91   while(!(I2C->SR1 & I2C_SR1_ADDR)  &&  tout());  			// Wait for address ack (ADDR)
  282  00bb c65217        	ld	a,21015
@@ -327,7 +327,7 @@
  622  01d7 be00          	ldw	x,_TIM4_tout
  623  01d9 2704          	jreq	L733
  624                     ; 165     I2C->DR = (u8)(SLAVE_ADDRESS << 1);   							// Send 7-bit device address & Write (R/W = 0)
- 626  01db 35a25216      	mov	21014,#162
+ 626  01db 35de5216      	mov	21014,#222
  627  01df               L733:
  628                     ; 167   while(!(I2C->SR1 & 2) && tout());     									// Wait for address ack (ADDR)
  630  01df c65217        	ld	a,21015

@@ -294,6 +294,11 @@ Next=Root.Source Files.src\main.c
 [Root.Source Files.src\main.c]
 ElemType=File
 PathName=src\main.c
+Next=Root.Source Files.src\rtc.c
+
+[Root.Source Files.src\rtc.c]
+ElemType=File
+PathName=src\rtc.c
 Next=Root.Source Files.stm8_interrupt_vector.c
 
 [Root.Source Files.stm8_interrupt_vector.c]
@@ -376,6 +381,11 @@ String.6.0=2020,12,9,13,9,48
 [Root.Include Files.inc\i2c_master_poll.h]
 ElemType=File
 PathName=inc\i2c_master_poll.h
+Next=Root.Include Files.inc\rtc.h
+
+[Root.Include Files.inc\rtc.h]
+ElemType=File
+PathName=inc\rtc.h
 Next=Root.Include Files.inc\stm8s.h
 
 [Root.Include Files.inc\stm8s.h]

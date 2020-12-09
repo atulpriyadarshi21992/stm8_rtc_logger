@@ -24,7 +24,7 @@
 #include "stm8s.h"
 
 
-#define SLAVE_ADDRESS  0x51
+#define SLAVE_ADDRESS  0x6F
 
 
 // ************************* Function Declaration ***************************
