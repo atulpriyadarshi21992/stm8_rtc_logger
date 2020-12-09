@@ -1,0 +1,12 @@
+;	STMicroelectronics Workspace file
+
+[Version]
+Keyword=ST7Workspace-V0.7
+
+[Project0]
+Filename=power_monitor.stp
+Dependencies=
+[Options]
+ActiveProject=power_monitor
+ActiveConfig=Debug
+AddSortedElements=1
