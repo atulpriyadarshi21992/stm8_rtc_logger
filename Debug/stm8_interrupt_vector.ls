@@ -1,11 +1,11 @@
    1                     ; C Compiler for STM8 (COSMIC Software)
    2                     ; Parser V4.11.14 - 18 Nov 2019
    3                     ; Generator (Limited) V4.4.11 - 19 Nov 2019
-  44                     ; 15 @far @interrupt void NonHandledInterrupt (void)
-  44                     ; 16 {
+  44                     ; 18 @far @interrupt void NonHandledInterrupt (void)
+  44                     ; 19 {
   45                     	switch	.text
   46  0000               f_NonHandledInterrupt:
-  50                     ; 20 	return;
+  50                     ; 23 	return;
   53  0000 80            	iret
   55                     .const:	section	.text
   56  0000               __vectab:
@@ -70,8 +70,8 @@
  135  004d 00            	dc.b	page(f_NonHandledInterrupt)
  136  004e 0000          	dc.w	f_NonHandledInterrupt
  137  0050 82            	dc.b	130
- 139  0051 00            	dc.b	page(f_NonHandledInterrupt)
- 140  0052 0000          	dc.w	f_NonHandledInterrupt
+ 139  0051 00            	dc.b	page(f_UARTInterruptHandle)
+ 140  0052 0000          	dc.w	f_UARTInterruptHandle
  141  0054 82            	dc.b	130
  143  0055 00            	dc.b	page(f_I2C_error_Interrupt_Handler)
  144  0056 0000          	dc.w	f_I2C_error_Interrupt_Handler
@@ -108,6 +108,7 @@
  235                     	xdef	__vectab
  236                     	xref	__stext
  237                     	xdef	f_NonHandledInterrupt
- 238                     	xref	f_TIM4InterruptHandle
- 239                     	xref	f_I2C_error_Interrupt_Handler
- 258                     	end
+ 238                     	xref	f_UARTInterruptHandle
+ 239                     	xref	f_TIM4InterruptHandle
+ 240                     	xref	f_I2C_error_Interrupt_Handler
+ 259                     	end

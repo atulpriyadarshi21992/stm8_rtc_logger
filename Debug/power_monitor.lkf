@@ -53,6 +53,7 @@ crtsi0.sm8
 Debug\i2c_master_poll.o
 Debug\main.o
 Debug\rtc.o
+Debug\uart_handler.o
 #<END OBJECT_FILES>
 
 

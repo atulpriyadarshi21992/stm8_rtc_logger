@@ -12,7 +12,7 @@ typedef struct
     u8 Hour;
     u8 Date;
     u8 Month;
-    u8 Year;
+    u16 Year;
 }time_t;
 
 extern time_t time_now;

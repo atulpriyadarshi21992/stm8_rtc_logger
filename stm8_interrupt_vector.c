@@ -5,6 +5,9 @@
 
 @far @interrupt void TIM4InterruptHandle (void);
 
+@far @interrupt void UARTInterruptHandle (void);
+
+
 typedef void @far (*interrupt_handler_t)(void);
 
 struct interrupt_vector {
@@ -43,7 +46,7 @@ struct interrupt_vector const _vectab[] = {
 	{0x82, NonHandledInterrupt}, /* irq15 */
 	{0x82, NonHandledInterrupt}, /* irq16 */
 	{0x82, NonHandledInterrupt}, /* irq17 */
-	{0x82, NonHandledInterrupt}, /* irq18 */
+	{0x82, UARTInterruptHandle}, /* irq18 */
 	{0x82, I2C_error_Interrupt_Handler}, /* irq19 */
 	{0x82, NonHandledInterrupt}, /* irq20 */
 	{0x82, NonHandledInterrupt}, /* irq21 */

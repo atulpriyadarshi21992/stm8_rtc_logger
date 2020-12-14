@@ -1,43 +1,72 @@
    1                     ; C Compiler for STM8 (COSMIC Software)
    2                     ; Parser V4.11.14 - 18 Nov 2019
    3                     ; Generator (Limited) V4.4.11 - 19 Nov 2019
-  48                     ; 11 void main (void) { 
-  50                     	switch	.text
-  51  0000               _main:
-  55                     ; 13   CLK->CKDIVR = 0x01;             // sys clock / 2
-  57  0000 350150c6      	mov	20678,#1
-  58                     ; 16   GPIOH->DDR |=  0x0F;            
-  60  0004 c65025        	ld	a,20517
-  61  0007 aa0f          	or	a,#15
-  62  0009 c75025        	ld	20517,a
-  63                     ; 17   GPIOH->CR1 |=  0x0F;            
-  65  000c c65026        	ld	a,20518
-  66  000f aa0f          	or	a,#15
-  67  0011 c75026        	ld	20518,a
-  68                     ; 20   TIM4_Init();                    
-  70  0014 cd0000        	call	_TIM4_Init
-  72                     ; 23 	I2C_Init();                     
-  74  0017 cd0000        	call	_I2C_Init
-  76                     ; 27 	enableInterrupts();
-  79  001a 9a            rim
-  81                     ; 30   if(!Verify_RTC())
-  84  001b cd0000        	call	_Verify_RTC
-  86  001e 4d            	tnz	a
-  87  001f 2603          	jrne	L32
-  88                     ; 31       Setup_RTC_Chip();
-  90  0021 cd0000        	call	_Setup_RTC_Chip
-  92  0024               L32:
-  93                     ; 37     ReadTimeRTC();
-  95  0024 cd0000        	call	_ReadTimeRTC
-  98  0027 20fb          	jra	L32
- 122                     	xdef	_main
- 123                     	xref	_Setup_RTC_Chip
- 124                     	xref	_Verify_RTC
- 125                     	xref	_ReadTimeRTC
- 126                     	switch	.ubsct
- 127  0000               _TIM4_tout:
- 128  0000 0000          	ds.b	2
- 129                     	xdef	_TIM4_tout
- 130                     	xref	_TIM4_Init
- 131                     	xref	_I2C_Init
- 151                     	end
+  62                     ; 12 void main (void) { 
+  64                     	switch	.text
+  65  0000               _main:
+  67  0000 89            	pushw	x
+  68       00000002      OFST:	set	2
+  71                     ; 20   TIM4_Init();                    
+  73  0001 cd0000        	call	_TIM4_Init
+  75                     ; 23 	I2C_Init(); 
+  77  0004 cd0000        	call	_I2C_Init
+  79                     ; 26   InitialiseUART();                    
+  81  0007 cd0000        	call	_InitialiseUART
+  83                     ; 30 	enableInterrupts();
+  86  000a 9a            rim
+  88                     ; 33   if(!Verify_RTC())
+  91  000b cd0000        	call	_Verify_RTC
+  93  000e 4d            	tnz	a
+  94  000f 2603          	jrne	L13
+  95                     ; 34       Setup_RTC_Chip();
+  97  0011 cd0000        	call	_Setup_RTC_Chip
+  99  0014               L13:
+ 100                     ; 40     ReadTimeRTC();
+ 102  0014 cd0000        	call	_ReadTimeRTC
+ 104                     ; 42     uart_write(time_now.Year>>8);
+ 106  0017 b605          	ld	a,_time_now+5
+ 107  0019 cd0000        	call	_uart_write
+ 109                     ; 43     uart_write((u8)time_now.Year);
+ 111  001c b606          	ld	a,_time_now+6
+ 112  001e cd0000        	call	_uart_write
+ 114                     ; 44     uart_write(time_now.Month);
+ 116  0021 b604          	ld	a,_time_now+4
+ 117  0023 cd0000        	call	_uart_write
+ 119                     ; 45     uart_write(time_now.Date);
+ 121  0026 b603          	ld	a,_time_now+3
+ 122  0028 cd0000        	call	_uart_write
+ 124                     ; 46     uart_write(time_now.Hour);
+ 126  002b b602          	ld	a,_time_now+2
+ 127  002d cd0000        	call	_uart_write
+ 129                     ; 47     uart_write(time_now.Minute);
+ 131  0030 b601          	ld	a,_time_now+1
+ 132  0032 cd0000        	call	_uart_write
+ 134                     ; 48     uart_write(time_now.Second);
+ 136  0035 b600          	ld	a,_time_now
+ 137  0037 cd0000        	call	_uart_write
+ 139                     ; 50     for(i=0;i<32000;i++);
+ 141  003a 5f            	clrw	x
+ 142  003b 1f01          	ldw	(OFST-1,sp),x
+ 144  003d               L53:
+ 148  003d 1e01          	ldw	x,(OFST-1,sp)
+ 149  003f 1c0001        	addw	x,#1
+ 150  0042 1f01          	ldw	(OFST-1,sp),x
+ 154  0044 9c            	rvf
+ 155  0045 1e01          	ldw	x,(OFST-1,sp)
+ 156  0047 a37d00        	cpw	x,#32000
+ 157  004a 2ff1          	jrslt	L53
+ 159  004c 20c6          	jra	L13
+ 183                     	xdef	_main
+ 184                     	xref	_uart_write
+ 185                     	xref	_InitialiseUART
+ 186                     	xref	_Setup_RTC_Chip
+ 187                     	xref	_Verify_RTC
+ 188                     	xref	_ReadTimeRTC
+ 189                     	xref.b	_time_now
+ 190                     	switch	.ubsct
+ 191  0000               _TIM4_tout:
+ 192  0000 0000          	ds.b	2
+ 193                     	xdef	_TIM4_tout
+ 194                     	xref	_TIM4_Init
+ 195                     	xref	_I2C_Init
+ 215                     	end

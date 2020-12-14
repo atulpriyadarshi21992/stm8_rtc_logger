@@ -53,6 +53,7 @@ crtsi0.sm8
 Release\i2c_master_poll.o
 Release\main.o
 Release\rtc.o
+Release\uart_handler.o
 #<END OBJECT_FILES>
 
 

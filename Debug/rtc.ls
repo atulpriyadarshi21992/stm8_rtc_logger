@@ -65,363 +65,367 @@
  298  003f 2603          	jrne	L721
  299                     ; 42         return FALSE;
  301  0041 4f            	clr	a
- 303  0042 2048          	jra	L41
+ 303  0042 204c          	jra	L41
  304  0044               L721:
  305                     ; 45     t->Second=bcd2dec((buf[0]&0x7F));
  307  0044 1e05          	ldw	x,(OFST+5,sp)
  308  0046 f6            	ld	a,(x)
  309  0047 a47f          	and	a,#127
- 310  0049 ad43          	call	_bcd2dec
+ 310  0049 ad47          	call	_bcd2dec
  312  004b 1e01          	ldw	x,(OFST+1,sp)
  313  004d f7            	ld	(x),a
  314                     ; 46     t->Minute=bcd2dec((buf[1]&0x7F));
  316  004e 1e05          	ldw	x,(OFST+5,sp)
  317  0050 e601          	ld	a,(1,x)
  318  0052 a47f          	and	a,#127
- 319  0054 ad38          	call	_bcd2dec
+ 319  0054 ad3c          	call	_bcd2dec
  321  0056 1e01          	ldw	x,(OFST+1,sp)
  322  0058 e701          	ld	(1,x),a
  323                     ; 47     t->Hour  =bcd2dec((buf[2]&0x3F));
  325  005a 1e05          	ldw	x,(OFST+5,sp)
  326  005c e602          	ld	a,(2,x)
  327  005e a43f          	and	a,#63
- 328  0060 ad2c          	call	_bcd2dec
+ 328  0060 ad30          	call	_bcd2dec
  330  0062 1e01          	ldw	x,(OFST+1,sp)
  331  0064 e702          	ld	(2,x),a
  332                     ; 48     t->Date=bcd2dec((buf[4]&0x3F));
  334  0066 1e05          	ldw	x,(OFST+5,sp)
  335  0068 e604          	ld	a,(4,x)
  336  006a a43f          	and	a,#63
- 337  006c ad20          	call	_bcd2dec
+ 337  006c ad24          	call	_bcd2dec
  339  006e 1e01          	ldw	x,(OFST+1,sp)
  340  0070 e703          	ld	(3,x),a
  341                     ; 49     t->Month=bcd2dec((buf[5]&0x1F));
  343  0072 1e05          	ldw	x,(OFST+5,sp)
  344  0074 e605          	ld	a,(5,x)
  345  0076 a41f          	and	a,#31
- 346  0078 ad14          	call	_bcd2dec
+ 346  0078 ad18          	call	_bcd2dec
  348  007a 1e01          	ldw	x,(OFST+1,sp)
  349  007c e704          	ld	(4,x),a
  350                     ; 50     t->Year=bcd2dec(buf[6])+2000;
  352  007e 1e05          	ldw	x,(OFST+5,sp)
  353  0080 e606          	ld	a,(6,x)
- 354  0082 ad0a          	call	_bcd2dec
- 356  0084 abd0          	add	a,#208
- 357  0086 1e01          	ldw	x,(OFST+1,sp)
- 358  0088 e705          	ld	(5,x),a
- 359                     ; 52     return TRUE;
- 361  008a a601          	ld	a,#1
- 363  008c               L41:
- 365  008c 85            	popw	x
- 366  008d 81            	ret
- 400                     ; 58 u8 bcd2dec(u8 num)
- 400                     ; 59 {
- 401                     	switch	.text
- 402  008e               _bcd2dec:
- 404  008e 88            	push	a
- 405  008f 88            	push	a
- 406       00000001      OFST:	set	1
- 409                     ; 60     return ((num/16 * 10) + (num % 16));
- 411  0090 a40f          	and	a,#15
- 412  0092 6b01          	ld	(OFST+0,sp),a
- 414  0094 7b02          	ld	a,(OFST+1,sp)
- 415  0096 5f            	clrw	x
- 416  0097 97            	ld	xl,a
- 417  0098 57            	sraw	x
- 418  0099 57            	sraw	x
- 419  009a 57            	sraw	x
- 420  009b 57            	sraw	x
- 421  009c a60a          	ld	a,#10
- 422  009e cd0000        	call	c_bmulx
- 424  00a1 01            	rrwa	x,a
- 425  00a2 1b01          	add	a,(OFST+0,sp)
- 426  00a4 2401          	jrnc	L02
- 427  00a6 5c            	incw	x
- 428  00a7               L02:
- 431  00a7 85            	popw	x
- 432  00a8 81            	ret
- 466                     ; 67 u8 dec2bcd(u8 num)
- 466                     ; 68 {
- 467                     	switch	.text
- 468  00a9               _dec2bcd:
- 470  00a9 88            	push	a
- 471  00aa 88            	push	a
- 472       00000001      OFST:	set	1
- 475                     ; 69     return ((num/10 * 16) + (num % 10));
- 477  00ab 5f            	clrw	x
- 478  00ac 97            	ld	xl,a
- 479  00ad a60a          	ld	a,#10
- 480  00af 62            	div	x,a
- 481  00b0 5f            	clrw	x
- 482  00b1 97            	ld	xl,a
- 483  00b2 9f            	ld	a,xl
- 484  00b3 6b01          	ld	(OFST+0,sp),a
- 486  00b5 7b02          	ld	a,(OFST+1,sp)
- 487  00b7 5f            	clrw	x
- 488  00b8 97            	ld	xl,a
- 489  00b9 a60a          	ld	a,#10
- 490  00bb 62            	div	x,a
- 491  00bc 9f            	ld	a,xl
- 492  00bd 97            	ld	xl,a
- 493  00be a610          	ld	a,#16
- 494  00c0 42            	mul	x,a
- 495  00c1 9f            	ld	a,xl
- 496  00c2 1b01          	add	a,(OFST+0,sp)
- 499  00c4 85            	popw	x
- 500  00c5 81            	ret
- 537                     ; 72 bool Verify_RTC(void)
- 537                     ; 73 {
- 538                     	switch	.text
- 539  00c6               _Verify_RTC:
- 541  00c6 88            	push	a
- 542       00000001      OFST:	set	1
- 545                     ; 74     u8 val=0;
- 547  00c7 0f01          	clr	(OFST+0,sp)
- 549                     ; 75     set_tout_ms(10);
- 551  00c9 ae000a        	ldw	x,#10
- 552  00cc bf00          	ldw	_TIM4_tout,x
- 553                     ; 76     I2C_ReadRegister(0x03,1,&val);
- 556  00ce 96            	ldw	x,sp
- 557  00cf 1c0001        	addw	x,#OFST+0
- 558  00d2 89            	pushw	x
- 559  00d3 ae0301        	ldw	x,#769
- 560  00d6 cd0000        	call	_I2C_ReadRegister
- 562  00d9 85            	popw	x
- 563                     ; 78     if(!(val & 0b00100000))         //Oscillator Stopped
- 565  00da 7b01          	ld	a,(OFST+0,sp)
- 566  00dc a520          	bcp	a,#32
- 567  00de 2604          	jrne	L302
- 568                     ; 79         return FALSE;
- 570  00e0 4f            	clr	a
- 573  00e1 5b01          	addw	sp,#1
- 574  00e3 81            	ret
- 575  00e4               L302:
- 576                     ; 80     if((val & 0b00010000))          //Power Failed
- 578  00e4 7b01          	ld	a,(OFST+0,sp)
- 579  00e6 a510          	bcp	a,#16
- 580  00e8 2704          	jreq	L502
- 581                     ; 81         return FALSE;
- 583  00ea 4f            	clr	a
- 586  00eb 5b01          	addw	sp,#1
- 587  00ed 81            	ret
- 588  00ee               L502:
- 589                     ; 82     if(!(val & 0b00001000))         //Ext Power Not Enabled
- 591  00ee 7b01          	ld	a,(OFST+0,sp)
- 592  00f0 a508          	bcp	a,#8
- 593  00f2 2604          	jrne	L702
- 594                     ; 83         return FALSE;
- 596  00f4 4f            	clr	a
- 599  00f5 5b01          	addw	sp,#1
- 600  00f7 81            	ret
- 601  00f8               L702:
- 602                     ; 84     set_tout_ms(10);
- 604  00f8 ae000a        	ldw	x,#10
- 605  00fb bf00          	ldw	_TIM4_tout,x
- 606                     ; 85     I2C_ReadRegister(0x02,1,&val);
- 609  00fd 96            	ldw	x,sp
- 610  00fe 1c0001        	addw	x,#OFST+0
- 611  0101 89            	pushw	x
- 612  0102 ae0201        	ldw	x,#513
- 613  0105 cd0000        	call	_I2C_ReadRegister
- 615  0108 85            	popw	x
- 616                     ; 86     if(val & 0b01000000)
- 618  0109 7b01          	ld	a,(OFST+0,sp)
- 619  010b a540          	bcp	a,#64
- 620  010d 2704          	jreq	L112
- 621                     ; 87         return FALSE;
- 623  010f 4f            	clr	a
- 626  0110 5b01          	addw	sp,#1
- 627  0112 81            	ret
- 628  0113               L112:
- 629                     ; 89     return TRUE;
- 631  0113 a601          	ld	a,#1
- 634  0115 5b01          	addw	sp,#1
- 635  0117 81            	ret
- 675                     ; 91 bool Setup_RTC_Chip(void)
- 675                     ; 92 {
- 676                     	switch	.text
- 677  0118               _Setup_RTC_Chip:
- 679  0118 88            	push	a
- 680       00000001      OFST:	set	1
- 683                     ; 93 		u8 val=0;
- 685  0119 0f01          	clr	(OFST+0,sp)
- 687                     ; 94     RTC_Start();
- 689  011b ad5c          	call	_RTC_Start
- 691                     ; 96     set_tout_ms(10);
- 693  011d ae000a        	ldw	x,#10
- 694  0120 bf00          	ldw	_TIM4_tout,x
- 695                     ; 97     I2C_ReadRegister(0x03,1,&val);
- 698  0122 96            	ldw	x,sp
- 699  0123 1c0001        	addw	x,#OFST+0
- 700  0126 89            	pushw	x
- 701  0127 ae0301        	ldw	x,#769
- 702  012a cd0000        	call	_I2C_ReadRegister
- 704  012d 85            	popw	x
- 705                     ; 99     val|=(0b00001000);              //Enable Ext Power
- 707  012e 7b01          	ld	a,(OFST+0,sp)
- 708  0130 aa08          	or	a,#8
- 709  0132 6b01          	ld	(OFST+0,sp),a
- 711                     ; 100     val&=(0b11101111);              //Clear Power Failed bit
- 713  0134 7b01          	ld	a,(OFST+0,sp)
- 714  0136 a4ef          	and	a,#239
- 715  0138 6b01          	ld	(OFST+0,sp),a
- 717                     ; 101     set_tout_ms(10);
- 719  013a ae000a        	ldw	x,#10
- 720  013d bf00          	ldw	_TIM4_tout,x
- 721                     ; 102     I2C_WriteRegister(0x03,1,&val);
- 724  013f 96            	ldw	x,sp
- 725  0140 1c0001        	addw	x,#OFST+0
- 726  0143 89            	pushw	x
- 727  0144 ae0301        	ldw	x,#769
- 728  0147 cd0000        	call	_I2C_WriteRegister
- 730  014a 85            	popw	x
- 731                     ; 103     set_tout_ms(10);
- 733  014b ae000a        	ldw	x,#10
- 734  014e bf00          	ldw	_TIM4_tout,x
- 735                     ; 104     I2C_ReadRegister(0x02,1,&val);
- 738  0150 96            	ldw	x,sp
- 739  0151 1c0001        	addw	x,#OFST+0
- 740  0154 89            	pushw	x
- 741  0155 ae0201        	ldw	x,#513
- 742  0158 cd0000        	call	_I2C_ReadRegister
- 744  015b 85            	popw	x
- 745                     ; 105     val&=(0b10111111);
- 747  015c 7b01          	ld	a,(OFST+0,sp)
- 748  015e a4bf          	and	a,#191
- 749  0160 6b01          	ld	(OFST+0,sp),a
- 751                     ; 106     set_tout_ms(10);
- 753  0162 ae000a        	ldw	x,#10
- 754  0165 bf00          	ldw	_TIM4_tout,x
- 755                     ; 107     I2C_WriteRegister(0x02,1,&val);
- 758  0167 96            	ldw	x,sp
- 759  0168 1c0001        	addw	x,#OFST+0
- 760  016b 89            	pushw	x
- 761  016c ae0201        	ldw	x,#513
- 762  016f cd0000        	call	_I2C_WriteRegister
- 764  0172 85            	popw	x
- 765                     ; 109     return Verify_RTC();
- 767  0173 cd00c6        	call	_Verify_RTC
- 771  0176 5b01          	addw	sp,#1
- 772  0178 81            	ret
- 809                     ; 111 void RTC_Start(void)
- 809                     ; 112 {
- 810                     	switch	.text
- 811  0179               _RTC_Start:
- 813  0179 88            	push	a
- 814       00000001      OFST:	set	1
- 817                     ; 113     u8 val=0;
- 819  017a 0f01          	clr	(OFST+0,sp)
- 821                     ; 114     set_tout_ms(10);
- 823  017c ae000a        	ldw	x,#10
- 824  017f bf00          	ldw	_TIM4_tout,x
- 825                     ; 115     I2C_ReadRegister(0,1,&val);
- 828  0181 96            	ldw	x,sp
- 829  0182 1c0001        	addw	x,#OFST+0
- 830  0185 89            	pushw	x
- 831  0186 ae0001        	ldw	x,#1
- 832  0189 cd0000        	call	_I2C_ReadRegister
- 834  018c 85            	popw	x
- 835                     ; 116     val=val|0b10000000;
- 837  018d 7b01          	ld	a,(OFST+0,sp)
- 838  018f aa80          	or	a,#128
- 839  0191 6b01          	ld	(OFST+0,sp),a
- 841                     ; 117     set_tout_ms(10);
- 843  0193 ae000a        	ldw	x,#10
- 844  0196 bf00          	ldw	_TIM4_tout,x
- 845                     ; 118     I2C_WriteRegister(0,1,&val);
- 848  0198 96            	ldw	x,sp
- 849  0199 1c0001        	addw	x,#OFST+0
- 850  019c 89            	pushw	x
- 851  019d ae0001        	ldw	x,#1
- 852  01a0 cd0000        	call	_I2C_WriteRegister
- 854  01a3 85            	popw	x
- 855                     ; 119 }
- 858  01a4 84            	pop	a
- 859  01a5 81            	ret
- 896                     ; 120 void RTC_Stop(void)
- 896                     ; 121 {
- 897                     	switch	.text
- 898  01a6               _RTC_Stop:
- 900  01a6 88            	push	a
- 901       00000001      OFST:	set	1
- 904                     ; 122     u8 val=0;
- 906  01a7 0f01          	clr	(OFST+0,sp)
- 908                     ; 123     set_tout_ms(10);
- 910  01a9 ae000a        	ldw	x,#10
- 911  01ac bf00          	ldw	_TIM4_tout,x
- 912                     ; 124     I2C_ReadRegister(0,1,&val);
- 915  01ae 96            	ldw	x,sp
- 916  01af 1c0001        	addw	x,#OFST+0
- 917  01b2 89            	pushw	x
- 918  01b3 ae0001        	ldw	x,#1
- 919  01b6 cd0000        	call	_I2C_ReadRegister
- 921  01b9 85            	popw	x
- 922                     ; 125     val=val&0b01111111;
- 924  01ba 7b01          	ld	a,(OFST+0,sp)
- 925  01bc a47f          	and	a,#127
- 926  01be 6b01          	ld	(OFST+0,sp),a
- 928                     ; 126     set_tout_ms(10);
- 930  01c0 ae000a        	ldw	x,#10
- 931  01c3 bf00          	ldw	_TIM4_tout,x
- 932                     ; 127     I2C_WriteRegister(0,1,&val);
- 935  01c5 96            	ldw	x,sp
- 936  01c6 1c0001        	addw	x,#OFST+0
- 937  01c9 89            	pushw	x
- 938  01ca ae0001        	ldw	x,#1
- 939  01cd cd0000        	call	_I2C_WriteRegister
- 941  01d0 85            	popw	x
- 942                     ; 128 }
- 945  01d1 84            	pop	a
- 946  01d2 81            	ret
- 993                     ; 129 bool SetInternalTime(u8* time_buf)
- 993                     ; 130 {
- 994                     	switch	.text
- 995  01d3               _SetInternalTime:
- 997  01d3 5206          	subw	sp,#6
- 998       00000006      OFST:	set	6
-1001                     ; 133     new_time.Second =time_buf[0];
-1003  01d5 f6            	ld	a,(x)
-1004  01d6 6b01          	ld	(OFST-5,sp),a
-1006                     ; 134     new_time.Minute =time_buf[1];
-1008  01d8 e601          	ld	a,(1,x)
-1009  01da 6b02          	ld	(OFST-4,sp),a
-1011                     ; 135     new_time.Hour   =time_buf[2];
-1013  01dc e602          	ld	a,(2,x)
-1014  01de 6b03          	ld	(OFST-3,sp),a
-1016                     ; 136     new_time.Date   =time_buf[3];
-1018  01e0 e603          	ld	a,(3,x)
-1019  01e2 6b04          	ld	(OFST-2,sp),a
-1021                     ; 137     new_time.Month  =time_buf[4];
-1023  01e4 e604          	ld	a,(4,x)
-1024  01e6 6b05          	ld	(OFST-1,sp),a
-1026                     ; 138     new_time.Year   =time_buf[5]+2000;
-1028  01e8 e605          	ld	a,(5,x)
-1029  01ea abd0          	add	a,#208
-1030  01ec 6b06          	ld	(OFST+0,sp),a
-1032                     ; 140     return SetTimeRTC(&new_time);
-1034  01ee 96            	ldw	x,sp
-1035  01ef 1c0001        	addw	x,#OFST-5
-1036  01f2 cd0000        	call	_SetTimeRTC
-1040  01f5 5b06          	addw	sp,#6
-1041  01f7 81            	ret
-1066                     	xdef	_SetInternalTime
-1067                     	xdef	_RTC_Stop
-1068                     	xdef	_RTC_Start
-1069                     	xdef	_Setup_RTC_Chip
-1070                     	xdef	_Verify_RTC
-1071                     	xdef	_bcd2dec
-1072                     	xdef	_dec2bcd
-1073                     	xdef	_BufferToTime
-1074                     	xdef	_ReadTimeRTC
-1075                     	xdef	_SetTimeRTC
-1076                     	switch	.ubsct
-1077  0000               _time_now:
-1078  0000 000000000000  	ds.b	6
-1079                     	xdef	_time_now
-1080                     	xref.b	_TIM4_tout
-1081                     	xref	_I2C_WriteRegister
-1082                     	xref	_I2C_ReadRegister
-1083                     	xref.b	c_x
-1103                     	xref	c_bmulx
-1104                     	xref	c_xymvx
-1105                     	end
+ 354  0082 ad0e          	call	_bcd2dec
+ 356  0084 5f            	clrw	x
+ 357  0085 97            	ld	xl,a
+ 358  0086 1c07d0        	addw	x,#2000
+ 359  0089 1601          	ldw	y,(OFST+1,sp)
+ 360  008b 90ef05        	ldw	(5,y),x
+ 361                     ; 52     return TRUE;
+ 363  008e a601          	ld	a,#1
+ 365  0090               L41:
+ 367  0090 85            	popw	x
+ 368  0091 81            	ret
+ 402                     ; 58 u8 bcd2dec(u8 num)
+ 402                     ; 59 {
+ 403                     	switch	.text
+ 404  0092               _bcd2dec:
+ 406  0092 88            	push	a
+ 407  0093 88            	push	a
+ 408       00000001      OFST:	set	1
+ 411                     ; 60     return ((num/16 * 10) + (num % 16));
+ 413  0094 a40f          	and	a,#15
+ 414  0096 6b01          	ld	(OFST+0,sp),a
+ 416  0098 7b02          	ld	a,(OFST+1,sp)
+ 417  009a 5f            	clrw	x
+ 418  009b 97            	ld	xl,a
+ 419  009c 57            	sraw	x
+ 420  009d 57            	sraw	x
+ 421  009e 57            	sraw	x
+ 422  009f 57            	sraw	x
+ 423  00a0 a60a          	ld	a,#10
+ 424  00a2 cd0000        	call	c_bmulx
+ 426  00a5 01            	rrwa	x,a
+ 427  00a6 1b01          	add	a,(OFST+0,sp)
+ 428  00a8 2401          	jrnc	L02
+ 429  00aa 5c            	incw	x
+ 430  00ab               L02:
+ 433  00ab 85            	popw	x
+ 434  00ac 81            	ret
+ 468                     ; 67 u8 dec2bcd(u8 num)
+ 468                     ; 68 {
+ 469                     	switch	.text
+ 470  00ad               _dec2bcd:
+ 472  00ad 88            	push	a
+ 473  00ae 88            	push	a
+ 474       00000001      OFST:	set	1
+ 477                     ; 69     return ((num/10 * 16) + (num % 10));
+ 479  00af 5f            	clrw	x
+ 480  00b0 97            	ld	xl,a
+ 481  00b1 a60a          	ld	a,#10
+ 482  00b3 62            	div	x,a
+ 483  00b4 5f            	clrw	x
+ 484  00b5 97            	ld	xl,a
+ 485  00b6 9f            	ld	a,xl
+ 486  00b7 6b01          	ld	(OFST+0,sp),a
+ 488  00b9 7b02          	ld	a,(OFST+1,sp)
+ 489  00bb 5f            	clrw	x
+ 490  00bc 97            	ld	xl,a
+ 491  00bd a60a          	ld	a,#10
+ 492  00bf 62            	div	x,a
+ 493  00c0 9f            	ld	a,xl
+ 494  00c1 97            	ld	xl,a
+ 495  00c2 a610          	ld	a,#16
+ 496  00c4 42            	mul	x,a
+ 497  00c5 9f            	ld	a,xl
+ 498  00c6 1b01          	add	a,(OFST+0,sp)
+ 501  00c8 85            	popw	x
+ 502  00c9 81            	ret
+ 539                     ; 72 bool Verify_RTC(void)
+ 539                     ; 73 {
+ 540                     	switch	.text
+ 541  00ca               _Verify_RTC:
+ 543  00ca 88            	push	a
+ 544       00000001      OFST:	set	1
+ 547                     ; 74     u8 val=0;
+ 549  00cb 0f01          	clr	(OFST+0,sp)
+ 551                     ; 75     set_tout_ms(10);
+ 553  00cd ae000a        	ldw	x,#10
+ 554  00d0 bf00          	ldw	_TIM4_tout,x
+ 555                     ; 76     I2C_ReadRegister(0x03,1,&val);
+ 558  00d2 96            	ldw	x,sp
+ 559  00d3 1c0001        	addw	x,#OFST+0
+ 560  00d6 89            	pushw	x
+ 561  00d7 ae0301        	ldw	x,#769
+ 562  00da cd0000        	call	_I2C_ReadRegister
+ 564  00dd 85            	popw	x
+ 565                     ; 78     if(!(val & 0b00100000))         //Oscillator Stopped
+ 567  00de 7b01          	ld	a,(OFST+0,sp)
+ 568  00e0 a520          	bcp	a,#32
+ 569  00e2 2604          	jrne	L302
+ 570                     ; 79         return FALSE;
+ 572  00e4 4f            	clr	a
+ 575  00e5 5b01          	addw	sp,#1
+ 576  00e7 81            	ret
+ 577  00e8               L302:
+ 578                     ; 80     if((val & 0b00010000))          //Power Failed
+ 580  00e8 7b01          	ld	a,(OFST+0,sp)
+ 581  00ea a510          	bcp	a,#16
+ 582  00ec 2704          	jreq	L502
+ 583                     ; 81         return FALSE;
+ 585  00ee 4f            	clr	a
+ 588  00ef 5b01          	addw	sp,#1
+ 589  00f1 81            	ret
+ 590  00f2               L502:
+ 591                     ; 82     if(!(val & 0b00001000))         //Ext Power Not Enabled
+ 593  00f2 7b01          	ld	a,(OFST+0,sp)
+ 594  00f4 a508          	bcp	a,#8
+ 595  00f6 2604          	jrne	L702
+ 596                     ; 83         return FALSE;
+ 598  00f8 4f            	clr	a
+ 601  00f9 5b01          	addw	sp,#1
+ 602  00fb 81            	ret
+ 603  00fc               L702:
+ 604                     ; 84     set_tout_ms(10);
+ 606  00fc ae000a        	ldw	x,#10
+ 607  00ff bf00          	ldw	_TIM4_tout,x
+ 608                     ; 85     I2C_ReadRegister(0x02,1,&val);
+ 611  0101 96            	ldw	x,sp
+ 612  0102 1c0001        	addw	x,#OFST+0
+ 613  0105 89            	pushw	x
+ 614  0106 ae0201        	ldw	x,#513
+ 615  0109 cd0000        	call	_I2C_ReadRegister
+ 617  010c 85            	popw	x
+ 618                     ; 86     if(val & 0b01000000)
+ 620  010d 7b01          	ld	a,(OFST+0,sp)
+ 621  010f a540          	bcp	a,#64
+ 622  0111 2704          	jreq	L112
+ 623                     ; 87         return FALSE;
+ 625  0113 4f            	clr	a
+ 628  0114 5b01          	addw	sp,#1
+ 629  0116 81            	ret
+ 630  0117               L112:
+ 631                     ; 89     return TRUE;
+ 633  0117 a601          	ld	a,#1
+ 636  0119 5b01          	addw	sp,#1
+ 637  011b 81            	ret
+ 677                     ; 91 bool Setup_RTC_Chip(void)
+ 677                     ; 92 {
+ 678                     	switch	.text
+ 679  011c               _Setup_RTC_Chip:
+ 681  011c 88            	push	a
+ 682       00000001      OFST:	set	1
+ 685                     ; 93 		u8 val=0;
+ 687  011d 0f01          	clr	(OFST+0,sp)
+ 689                     ; 94     RTC_Start();
+ 691  011f ad5c          	call	_RTC_Start
+ 693                     ; 96     set_tout_ms(10);
+ 695  0121 ae000a        	ldw	x,#10
+ 696  0124 bf00          	ldw	_TIM4_tout,x
+ 697                     ; 97     I2C_ReadRegister(0x03,1,&val);
+ 700  0126 96            	ldw	x,sp
+ 701  0127 1c0001        	addw	x,#OFST+0
+ 702  012a 89            	pushw	x
+ 703  012b ae0301        	ldw	x,#769
+ 704  012e cd0000        	call	_I2C_ReadRegister
+ 706  0131 85            	popw	x
+ 707                     ; 99     val|=(0b00001000);              //Enable Ext Power
+ 709  0132 7b01          	ld	a,(OFST+0,sp)
+ 710  0134 aa08          	or	a,#8
+ 711  0136 6b01          	ld	(OFST+0,sp),a
+ 713                     ; 100     val&=(0b11101111);              //Clear Power Failed bit
+ 715  0138 7b01          	ld	a,(OFST+0,sp)
+ 716  013a a4ef          	and	a,#239
+ 717  013c 6b01          	ld	(OFST+0,sp),a
+ 719                     ; 101     set_tout_ms(10);
+ 721  013e ae000a        	ldw	x,#10
+ 722  0141 bf00          	ldw	_TIM4_tout,x
+ 723                     ; 102     I2C_WriteRegister(0x03,1,&val);
+ 726  0143 96            	ldw	x,sp
+ 727  0144 1c0001        	addw	x,#OFST+0
+ 728  0147 89            	pushw	x
+ 729  0148 ae0301        	ldw	x,#769
+ 730  014b cd0000        	call	_I2C_WriteRegister
+ 732  014e 85            	popw	x
+ 733                     ; 103     set_tout_ms(10);
+ 735  014f ae000a        	ldw	x,#10
+ 736  0152 bf00          	ldw	_TIM4_tout,x
+ 737                     ; 104     I2C_ReadRegister(0x02,1,&val);
+ 740  0154 96            	ldw	x,sp
+ 741  0155 1c0001        	addw	x,#OFST+0
+ 742  0158 89            	pushw	x
+ 743  0159 ae0201        	ldw	x,#513
+ 744  015c cd0000        	call	_I2C_ReadRegister
+ 746  015f 85            	popw	x
+ 747                     ; 105     val&=(0b10111111);
+ 749  0160 7b01          	ld	a,(OFST+0,sp)
+ 750  0162 a4bf          	and	a,#191
+ 751  0164 6b01          	ld	(OFST+0,sp),a
+ 753                     ; 106     set_tout_ms(10);
+ 755  0166 ae000a        	ldw	x,#10
+ 756  0169 bf00          	ldw	_TIM4_tout,x
+ 757                     ; 107     I2C_WriteRegister(0x02,1,&val);
+ 760  016b 96            	ldw	x,sp
+ 761  016c 1c0001        	addw	x,#OFST+0
+ 762  016f 89            	pushw	x
+ 763  0170 ae0201        	ldw	x,#513
+ 764  0173 cd0000        	call	_I2C_WriteRegister
+ 766  0176 85            	popw	x
+ 767                     ; 109     return Verify_RTC();
+ 769  0177 cd00ca        	call	_Verify_RTC
+ 773  017a 5b01          	addw	sp,#1
+ 774  017c 81            	ret
+ 811                     ; 111 void RTC_Start(void)
+ 811                     ; 112 {
+ 812                     	switch	.text
+ 813  017d               _RTC_Start:
+ 815  017d 88            	push	a
+ 816       00000001      OFST:	set	1
+ 819                     ; 113     u8 val=0;
+ 821  017e 0f01          	clr	(OFST+0,sp)
+ 823                     ; 114     set_tout_ms(10);
+ 825  0180 ae000a        	ldw	x,#10
+ 826  0183 bf00          	ldw	_TIM4_tout,x
+ 827                     ; 115     I2C_ReadRegister(0,1,&val);
+ 830  0185 96            	ldw	x,sp
+ 831  0186 1c0001        	addw	x,#OFST+0
+ 832  0189 89            	pushw	x
+ 833  018a ae0001        	ldw	x,#1
+ 834  018d cd0000        	call	_I2C_ReadRegister
+ 836  0190 85            	popw	x
+ 837                     ; 116     val=val|0b10000000;
+ 839  0191 7b01          	ld	a,(OFST+0,sp)
+ 840  0193 aa80          	or	a,#128
+ 841  0195 6b01          	ld	(OFST+0,sp),a
+ 843                     ; 117     set_tout_ms(10);
+ 845  0197 ae000a        	ldw	x,#10
+ 846  019a bf00          	ldw	_TIM4_tout,x
+ 847                     ; 118     I2C_WriteRegister(0,1,&val);
+ 850  019c 96            	ldw	x,sp
+ 851  019d 1c0001        	addw	x,#OFST+0
+ 852  01a0 89            	pushw	x
+ 853  01a1 ae0001        	ldw	x,#1
+ 854  01a4 cd0000        	call	_I2C_WriteRegister
+ 856  01a7 85            	popw	x
+ 857                     ; 119 }
+ 860  01a8 84            	pop	a
+ 861  01a9 81            	ret
+ 898                     ; 120 void RTC_Stop(void)
+ 898                     ; 121 {
+ 899                     	switch	.text
+ 900  01aa               _RTC_Stop:
+ 902  01aa 88            	push	a
+ 903       00000001      OFST:	set	1
+ 906                     ; 122     u8 val=0;
+ 908  01ab 0f01          	clr	(OFST+0,sp)
+ 910                     ; 123     set_tout_ms(10);
+ 912  01ad ae000a        	ldw	x,#10
+ 913  01b0 bf00          	ldw	_TIM4_tout,x
+ 914                     ; 124     I2C_ReadRegister(0,1,&val);
+ 917  01b2 96            	ldw	x,sp
+ 918  01b3 1c0001        	addw	x,#OFST+0
+ 919  01b6 89            	pushw	x
+ 920  01b7 ae0001        	ldw	x,#1
+ 921  01ba cd0000        	call	_I2C_ReadRegister
+ 923  01bd 85            	popw	x
+ 924                     ; 125     val=val&0b01111111;
+ 926  01be 7b01          	ld	a,(OFST+0,sp)
+ 927  01c0 a47f          	and	a,#127
+ 928  01c2 6b01          	ld	(OFST+0,sp),a
+ 930                     ; 126     set_tout_ms(10);
+ 932  01c4 ae000a        	ldw	x,#10
+ 933  01c7 bf00          	ldw	_TIM4_tout,x
+ 934                     ; 127     I2C_WriteRegister(0,1,&val);
+ 937  01c9 96            	ldw	x,sp
+ 938  01ca 1c0001        	addw	x,#OFST+0
+ 939  01cd 89            	pushw	x
+ 940  01ce ae0001        	ldw	x,#1
+ 941  01d1 cd0000        	call	_I2C_WriteRegister
+ 943  01d4 85            	popw	x
+ 944                     ; 128 }
+ 947  01d5 84            	pop	a
+ 948  01d6 81            	ret
+ 995                     ; 129 bool SetInternalTime(u8* time_buf)
+ 995                     ; 130 {
+ 996                     	switch	.text
+ 997  01d7               _SetInternalTime:
+ 999  01d7 5207          	subw	sp,#7
+1000       00000007      OFST:	set	7
+1003                     ; 133     new_time.Second =time_buf[0];
+1005  01d9 f6            	ld	a,(x)
+1006  01da 6b01          	ld	(OFST-6,sp),a
+1008                     ; 134     new_time.Minute =time_buf[1];
+1010  01dc e601          	ld	a,(1,x)
+1011  01de 6b02          	ld	(OFST-5,sp),a
+1013                     ; 135     new_time.Hour   =time_buf[2];
+1015  01e0 e602          	ld	a,(2,x)
+1016  01e2 6b03          	ld	(OFST-4,sp),a
+1018                     ; 136     new_time.Date   =time_buf[3];
+1020  01e4 e603          	ld	a,(3,x)
+1021  01e6 6b04          	ld	(OFST-3,sp),a
+1023                     ; 137     new_time.Month  =time_buf[4];
+1025  01e8 e604          	ld	a,(4,x)
+1026  01ea 6b05          	ld	(OFST-2,sp),a
+1028                     ; 138     new_time.Year   =time_buf[5]+2000;
+1030  01ec e605          	ld	a,(5,x)
+1031  01ee 5f            	clrw	x
+1032  01ef 97            	ld	xl,a
+1033  01f0 1c07d0        	addw	x,#2000
+1034  01f3 1f06          	ldw	(OFST-1,sp),x
+1036                     ; 140     return SetTimeRTC(&new_time);
+1038  01f5 96            	ldw	x,sp
+1039  01f6 1c0001        	addw	x,#OFST-6
+1040  01f9 cd0000        	call	_SetTimeRTC
+1044  01fc 5b07          	addw	sp,#7
+1045  01fe 81            	ret
+1070                     	xdef	_SetInternalTime
+1071                     	xdef	_RTC_Stop
+1072                     	xdef	_RTC_Start
+1073                     	xdef	_Setup_RTC_Chip
+1074                     	xdef	_Verify_RTC
+1075                     	xdef	_bcd2dec
+1076                     	xdef	_dec2bcd
+1077                     	xdef	_BufferToTime
+1078                     	xdef	_ReadTimeRTC
+1079                     	xdef	_SetTimeRTC
+1080                     	switch	.ubsct
+1081  0000               _time_now:
+1082  0000 000000000000  	ds.b	7
+1083                     	xdef	_time_now
+1084                     	xref.b	_TIM4_tout
+1085                     	xref	_I2C_WriteRegister
+1086                     	xref	_I2C_ReadRegister
+1087                     	xref.b	c_x
+1107                     	xref	c_bmulx
+1108                     	xref	c_xymvx
+1109                     	end

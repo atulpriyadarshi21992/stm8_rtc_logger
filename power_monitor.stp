@@ -61,7 +61,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=STM8 Cosmic
-String.102.0=C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8
+String.102.0=
 String.103.0=
 String.104.0=Hstm8
 String.105.0=Lib
@@ -141,7 +141,7 @@ String.100.2=STM8 Cosmic
 String.100.3=ST7 Metrowerks V1.1
 String.100.4=Raisonance
 String.101.0=STM8 Cosmic
-String.102.0=C:\Program Files (x86)\COSMIC\FSE_Compilers\CXSTM8
+String.102.0=
 String.103.0=
 String.104.0=Hstm8
 String.105.0=Lib
@@ -299,6 +299,11 @@ Next=Root.Source Files.src\rtc.c
 [Root.Source Files.src\rtc.c]
 ElemType=File
 PathName=src\rtc.c
+Next=Root.Source Files.src\uart_handler.c
+
+[Root.Source Files.src\uart_handler.c]
+ElemType=File
+PathName=src\uart_handler.c
 Next=Root.Source Files.stm8_interrupt_vector.c
 
 [Root.Source Files.stm8_interrupt_vector.c]
@@ -396,3 +401,8 @@ Next=Root.Include Files.inc\stm8s_type.h
 [Root.Include Files.inc\stm8s_type.h]
 ElemType=File
 PathName=inc\stm8s_type.h
+Next=Root.Include Files.inc\uart_handler.h
+
+[Root.Include Files.inc\uart_handler.h]
+ElemType=File
+PathName=inc\uart_handler.h
